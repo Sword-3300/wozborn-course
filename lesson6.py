@@ -29,3 +29,4 @@ for song, artist in grouped_songs_with_artists:
 print("\nСгруппированный плейлист")
 for artist, songs in final_playlist.items():
     print(f"{artist} — {', '.join(songs)}")
+    
