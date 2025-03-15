@@ -7,7 +7,7 @@ import os
 
 player_hp = 100
 monster_hp = 100
-move = 0
+turn = 0
 variants = ["защита", "атака"]
 characters = ["Игрок", "Монстр"]
 SAVE_FILE = r"save.json"
@@ -66,7 +66,7 @@ def save_game():
     with open(SAVE_FILE, "w") as save:
         json.dump({
         "time": datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S"),
-        "move": move,
+        "move": turn,
         "player_hp": player_hp,
         "monster_hp": monster_hp
     }, save)
@@ -79,33 +79,36 @@ def load_game():
         return None
 
 
+os.system("cls" if os.name == "nt" else "clear")
 print("Добро пожаловать в игру про драки с монстром!")
 
 data = load_game()
 while True:
     if data:
-        user_input = input(f"{Fore.YELLOW}Хотите продолжить игру с последнего момента? (да/нет)\n> {Fore.RESET}").lower()
+        user_input = input(f"{Fore.YELLOW}Обнаружен файл сохранения с {data.get('time')[0:10]}. Хотите продолжить игру? (да/нет)\n> {Fore.RESET}").lower()
         if user_input == "да":
             player_hp = data.get("player_hp")
             monster_hp = data.get("monster_hp")
-            move = data.get("move")
+            turn = data.get("move")
         elif user_input == "нет":
             if os.path.exists(SAVE_FILE): os.remove(SAVE_FILE)
-        else: print(f"{Fore.RED}Такого варианта нет!{Fore.RESET}")
-    os.system("cls" if os.name == "nt" else "clear")
-    print("Добро пожаловать в игру про драки с монстром!")
+        else:
+            print(f"{Fore.RED}Такого варианта нет!{Fore.RESET}")
+            continue
+        os.system("cls" if os.name == "nt" else "clear")
+        print("Добро пожаловать в игру про драки с монстром!")
     break
 
 
 while True:
-    move += 1
+    turn += 1
 
     player_damage, player_armor = random_dmg_and_arm(3, 20, 1, 15)
     monster_damage, monster_armor = random_dmg_and_arm(3, 20, 1, 15)
 
     display_information(player_hp, monster_hp)
 
-    print(f"Ход: {move}")
+    print(f"Ход: {turn}")
     player_action = player_choice()
     monster_action = monster_choice()
 
@@ -125,4 +128,4 @@ while True:
 
     save_game()
 
-print(f"Игра закончилась на {move} ходе!")
+print(f"Игра закончилась на {turn} ходе!")
